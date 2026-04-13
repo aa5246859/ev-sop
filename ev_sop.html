@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="充電樁SOP">
+<meta name="theme-color" content="#1a1d27">
+<title>充電樁安裝 SOP</title>
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22%E5%85%85%E9%9B%BB%E6%A8%81%E5%AE%89%E8%A3%9D%20SOP%22%2C%22short_name%22%3A%22%E5%85%85%E9%9B%BB%E6%A8%81SOP%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f1117%22%2C%22theme_color%22%3A%22%231a1d27%22%7D">
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#222536;--border:rgba(255,255,255,0.08);
+  --text:#f0f0f0;--muted:#8a8fa8;
+  --blue:#4f9cf9;--blue-bg:rgba(79,156,249,0.12);
+  --green:#3ecf8e;--green-bg:rgba(62,207,142,0.12);
+  --amber:#f5a623;--amber-bg:rgba(245,166,35,0.12);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.12);
+  --teal:#2dd4bf;--teal-bg:rgba(45,212,191,0.12);
+  --red:#f87171;--red-bg:rgba(248,113,113,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;padding-bottom:env(safe-area-inset-bottom);}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;}
+.logo{width:32px;height:32px;background:var(--blue-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+header h1{font-size:15px;font-weight:700;}
+header p{font-size:11px;color:var(--muted);}
+nav{display:flex;overflow-x:auto;padding:0 10px;background:var(--surface);border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:0;z-index:10;}
+nav::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:9px 12px;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.section{display:none;padding:12px;}
+.section.active{display:block;}
+.phase-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px;}
+.phase-label:first-child{margin-top:0;}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:background .15s;}
+.step:active{background:var(--surface2);}
+.step-done{opacity:.38;}
+.step-done .step-num{background:var(--green-bg)!important;color:var(--green)!important;}
+.step-num{min-width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.blue{background:var(--blue-bg);color:var(--blue);}
+.green{background:var(--green-bg);color:var(--green);}
+.amber{background:var(--amber-bg);color:var(--amber);}
+.teal{background:var(--teal-bg);color:var(--teal);}
+.step-body{flex:1;}
+.step-title{font-size:13px;font-weight:500;}
+.step-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.check-icon{font-size:14px;margin-top:4px;color:var(--muted);flex-shrink:0;}
+.progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.bar-outer{flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.bar-inner{height:100%;background:var(--green);border-radius:99px;transition:width .4s ease;}
+.bar-text{font-size:11px;color:var(--muted);white-space:nowrap;}
+.reset-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit;}
+.info-block{background:var(--amber-bg);border:1px solid rgba(245,166,35,0.2);border-radius:9px;padding:9px 12px;font-size:11px;color:var(--amber);margin-bottom:10px;}
+.brand-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:6px;}
+.brand-name{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px;}
+.brand-detail{font-size:12px;color:var(--muted);line-height:1.7;}
+.brand-detail strong{color:var(--text);font-weight:500;}
+.link-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:6px;text-decoration:none;display:block;}
+.link-card-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.link-card-url{font-size:11px;color:var(--blue);}
+.link-card-cred{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.8;}
+/* CASES */
+.case-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.case-list-title{font-size:14px;font-weight:700;}
+.new-btn{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(79,156,249,0.25);padding:6px 13px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;}
+.filter-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.filter-tab{padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);font-family:inherit;transition:all .15s;}
+.filter-tab.active-all{background:var(--surface2);color:var(--text);border-color:var(--border);}
+.filter-tab.active-pending{background:var(--amber-bg);color:var(--amber);border-color:rgba(245,166,35,0.3);}
+.filter-tab.active-confirmed{background:var(--blue-bg);color:var(--blue);border-color:rgba(79,156,249,0.3);}
+.filter-tab.active-done{background:var(--green-bg);color:var(--green);border-color:rgba(62,207,142,0.3);}
+.status-pending{font-size:10px;background:var(--amber-bg);color:var(--amber);padding:2px 7px;border-radius:4px;font-weight:600;white-space:nowrap;}
+.status-confirmed{font-size:10px;background:var(--blue-bg);color:var(--blue);padding:2px 7px;border-radius:4px;font-weight:600;white-space:nowrap;}
+.status-done{font-size:10px;background:var(--green-bg);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:600;white-space:nowrap;}
+.reason-tag{font-size:10px;color:var(--muted);margin-top:3px;}
+.case-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:7px;cursor:pointer;transition:background .15s;}
+.case-card:active{background:var(--surface2);}
+.case-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.case-card-name{font-size:13px;font-weight:700;}
+.case-card-addr{font-size:11px;color:var(--muted);margin-top:2px;}
+.case-card-brand{font-size:10px;background:var(--purple-bg);color:var(--purple);padding:2px 7px;border-radius:5px;white-space:nowrap;font-weight:500;}
+.case-card-bottom{display:flex;align-items:center;gap:7px;margin-top:9px;}
+.mini-bar-outer{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.mini-bar-inner{height:100%;background:var(--green);border-radius:99px;}
+.case-card-pct{font-size:10px;color:var(--muted);}
+.case-card-date{font-size:10px;color:var(--muted);}
+.sid-badge{font-size:10px;background:var(--teal-bg);color:var(--teal);padding:2px 6px;border-radius:4px;font-weight:500;}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot-done{background:var(--green);}
+.dot-wip{background:var(--amber);}
+.dot-new{background:var(--muted);}
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:13px;cursor:pointer;margin-bottom:14px;background:none;border:none;font-family:inherit;padding:0;}
+.case-info-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:12px;}
+.case-info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.case-info-row:last-child{border-bottom:none;}
+.case-info-label{color:var(--muted);}
+.case-info-val{font-weight:500;text-align:right;max-width:60%;}
+.del-btn{margin-top:18px;width:100%;background:var(--red-bg);color:var(--red);border:1px solid rgba(248,113,113,0.2);padding:10px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;}
+/* SID / DONE PHOTOS */
+.photo-section{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-top:12px;}
+.photo-section-title{font-size:12px;font-weight:700;margin-bottom:8px;}
+.photo-upload-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.photo-upload-btn{border:1px solid;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.photo-hint{font-size:11px;color:var(--muted);}
+.photo-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.photo-thumb-wrap{position:relative;display:inline-block;}
+.photo-thumb{width:76px;height:76px;border-radius:8px;object-fit:cover;border:1px solid var(--border);display:block;}
+.photo-del{position:absolute;top:-5px;right:-5px;width:18px;height:18px;background:var(--red);color:#fff;border-radius:50%;font-size:11px;line-height:18px;text-align:center;cursor:pointer;border:none;font-family:inherit;font-weight:700;}
+.photo-empty{font-size:12px;color:var(--muted);padding:8px 0;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:520px;padding:18px 16px;padding-bottom:calc(20px + env(safe-area-inset-bottom));border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
+.field{margin-bottom:11px;}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;}
+.field input:focus,.field select:focus{border-color:rgba(79,156,249,0.5);}
+.field select option{background:var(--surface2);}
+.modal-actions{display:flex;gap:8px;margin-top:14px;}
+.modal-cancel{flex:1;background:none;border:1px solid var(--border);color:var(--muted);padding:11px;border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit;}
+.modal-save{flex:2;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(79,156,249,0.3);padding:11px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+/* SITES */
+.city-block{margin-bottom:16px;}
+.city-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.city-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.city-badge{background:var(--teal-bg);color:var(--teal);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;}
+.site-list{display:flex;flex-wrap:wrap;gap:6px;}
+.site-chip{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 11px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px;}
+.site-chip-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0;line-height:1;font-family:inherit;}
+.add-site-row{display:flex;gap:7px;margin-top:10px;}
+.add-site-city{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;}
+.add-site-name{flex:2;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;}
+.add-site-btn{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(79,156,249,0.3);border-radius:8px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;}
+/* NOTES */
+.notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:7px;}
+.note-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px;}
+.note-title{font-size:13px;font-weight:700;flex:1;}
+.note-date{font-size:10px;color:var(--muted);white-space:nowrap;margin-top:2px;}
+.note-body{font-size:12px;color:var(--muted);line-height:1.7;white-space:pre-wrap;}
+.note-del{background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+.note-edit-area{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);font-family:inherit;outline:none;resize:vertical;min-height:80px;margin-top:5px;}
+.note-save-btn{margin-top:5px;background:var(--green-bg);color:var(--green);border:1px solid rgba(62,207,142,0.3);padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.note-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.note-arrow{font-size:11px;color:var(--muted);transition:transform .2s;}
+.note-body-wrap{overflow:hidden;transition:max-height .25s ease;}
+.note-body-wrap.collapsed{max-height:0!important;}
+.pillar-yes{font-size:10px;background:rgba(62,207,142,0.15);color:var(--green);padding:2px 6px;border-radius:4px;font-weight:500;}
+.pillar-no{font-size:10px;background:rgba(248,113,113,0.15);color:var(--red);padding:2px 6px;border-radius:4px;font-weight:500;}
+.pillar-unk{font-size:10px;background:rgba(255,255,255,0.06);color:var(--muted);padding:2px 6px;border-radius:4px;font-weight:500;}
+/* REMINDER */
+.reminder-banner{background:#1a1400;border:1px solid rgba(245,166,35,0.4);border-radius:11px;padding:11px 13px;margin-bottom:8px;cursor:pointer;}
+.reminder-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.reminder-title{font-size:12px;font-weight:700;color:var(--amber);}
+.reminder-sub{font-size:11px;color:var(--muted);}
+/* PRE-DEPARTURE */
+.predep-card{background:var(--surface);border:1px solid rgba(245,166,35,0.3);border-radius:11px;padding:12px 14px;margin-bottom:12px;}
+.predep-title{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:9px;}
+.predep-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.predep-item:last-child{border-bottom:none;padding-bottom:0;}
+.predep-check{width:19px;height:19px;border-radius:5px;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
+.predep-check.on{background:var(--amber);border-color:var(--amber);color:#000;}
+.predep-label{font-size:12px;flex:1;line-height:1.5;}
+.predep-val{font-size:10px;color:var(--amber);margin-top:1px;}
+/* PWA INSTALL */
+.install-bar{background:var(--blue-bg);border:1px solid rgba(79,156,249,0.2);border-radius:11px;padding:11px 13px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.install-bar p{flex:1;font-size:12px;color:var(--blue);}
+.install-bar button{background:var(--blue);color:#000;border:none;padding:6px 13px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(15,17,23,0.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-overlay p{font-size:13px;color:var(--muted);}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⚡</div>
+  <div>
+    <h1>充電樁安裝 SOP</h1>
+    <p id="header-sub">充明電能｜現場作業手冊</p>
+  </div>
+</header>
+<nav>
+  <button class="tab active" data-tab="cases">📋 案件</button>
+  <button class="tab" data-tab="checklist">✓ 清單</button>
+  <button class="tab" data-tab="ocpp">後台設定</button>
+  <button class="tab" data-tab="sites">客戶地點</button>
+  <button class="tab" data-tab="notes">📝 筆記</button>
+  <button class="tab" data-tab="systems">系統</button>
+</nav>
+
+<!-- CASES -->
+<div id="cases" class="section active">
+  <div id="view-list">
+    <div id="install-area"></div>
+    <div id="reminder-area"></div>
+    <div class="case-list-header">
+      <span class="case-list-title">所有案件</span>
+      <button class="new-btn" onclick="openModal()">＋ 新增案件</button>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active-all" data-filter="all" onclick="setFilter('all',this)">全部</button>
+      <button class="filter-tab" data-filter="pending" onclick="setFilter('pending',this)">排程中</button>
+      <button class="filter-tab" data-filter="confirmed" onclick="setFilter('confirmed',this)">確定安裝</button>
+      <button class="filter-tab" data-filter="done" onclick="setFilter('done',this)">已完成</button>
+    </div>
+    <div id="case-list-body"></div>
+  </div>
+  <div id="view-detail" style="display:none">
+    <button class="back-btn" onclick="showList()">← 返回列表</button>
+    <div class="progress-bar">
+      <div class="bar-outer"><div class="bar-inner" id="d-bar" style="width:0%"></div></div>
+      <span class="bar-text" id="d-bar-txt">0 / 15</span>
+      <button class="reset-btn" onclick="resetCase()">重置</button>
+    </div>
+    <div class="case-info-card" id="detail-info"></div>
+    <div class="predep-card">
+      <div class="predep-title">⚠ 出門前確認清單</div>
+      <div class="predep-item" onclick="togglePredep(0)"><div class="predep-check" id="pd0"></div><div><div class="predep-label">充電樁型號確認</div><div class="predep-val" id="pd-charger"></div></div></div>
+      <div class="predep-item" onclick="togglePredep(1)"><div class="predep-check" id="pd1"></div><div><div class="predep-label">開關箱型號確認</div><div class="predep-val" id="pd-switchbox"></div></div></div>
+      <div class="predep-item" onclick="togglePredep(2)"><div class="predep-check" id="pd2"></div><div><div class="predep-label">客戶需要立柱</div><div class="predep-val" id="pd-pillar"></div></div></div>
+      <div class="predep-item" onclick="togglePredep(3)"><div class="predep-check" id="pd3"></div><div class="predep-label">OCPP 後台設定已完成</div></div>
+    </div>
+    <div class="info-block">點選步驟標記完成 ✓</div>
+    <div class="phase-label">階段一 — 前置作業</div>
+    <div class="step" id="ds0" onclick="dtoggle(0)"><div class="step-num blue">1</div><div class="step-body"><div class="step-title">客戶詢價與填寫表單</div><div class="step-desc">Line 接洽 → 請客戶填寫表單</div></div><div class="check-icon" id="dc0">○</div></div>
+    <div class="step" id="ds1" onclick="dtoggle(1)"><div class="step-num blue">2</div><div class="step-body"><div class="step-title">收取車位照片</div><div class="step-desc">須包含匯流排位置（完整拍到）</div></div><div class="check-icon" id="dc1">○</div></div>
+    <div class="step" id="ds2" onclick="dtoggle(2)"><div class="step-num blue">3</div><div class="step-body"><div class="step-title">畫圖給客戶確認</div><div class="step-desc">依照片繪製配置圖 → 傳給客戶確認</div></div><div class="check-icon" id="dc2">○</div></div>
+    <div class="step" id="ds3" onclick="dtoggle(3)"><div class="step-num blue">4</div><div class="step-body"><div class="step-title">安排師傅時間</div><div class="step-desc">客戶確認後 → 與師傅排程安裝日期</div></div><div class="check-icon" id="dc3">○</div></div>
+    <div class="step" id="ds4" onclick="dtoggle(4)"><div class="step-num blue">5</div><div class="step-body"><div class="step-title">設定 OCPP 後台</div><div class="step-desc">依品牌進入後台路徑設定（見後台設定頁）</div></div><div class="check-icon" id="dc4">○</div></div>
+    <div class="phase-label">階段二 — 到場安裝</div>
+    <div class="step" id="ds5" onclick="dtoggle(5)"><div class="step-num amber">6</div><div class="step-body"><div class="step-title">管線配置</div><div class="step-desc">師傅負責管線佈設</div></div><div class="check-icon" id="dc5">○</div></div>
+    <div class="step" id="ds6" onclick="dtoggle(6)"><div class="step-num amber">7</div><div class="step-body"><div class="step-title">測量電壓</div><div class="step-desc">測匯流排電、開關箱電壓是否正常<br>⚠ 確認匯流排有電後，才能安裝開關箱</div></div><div class="check-icon" id="dc6">○</div></div>
+    <div class="step" id="ds7" onclick="dtoggle(7)"><div class="step-num amber">8</div><div class="step-body"><div class="step-title">安裝開關箱</div><div class="step-desc">確認接電處吻合</div></div><div class="check-icon" id="dc7">○</div></div>
+    <div class="step" id="ds8" onclick="dtoggle(8)"><div class="step-num amber">9</div><div class="step-body"><div class="step-title">開電等待 5 分鐘</div><div class="step-desc">確認開關箱 & PLC 盤正常 → 關電</div></div><div class="check-icon" id="dc8">○</div></div>
+    <div class="step" id="ds9" onclick="dtoggle(9)"><div class="step-num amber">10</div><div class="step-body"><div class="step-title">充電樁安裝上機</div><div class="step-desc">開關箱通電，確認充電樁 & 網路線燈</div></div><div class="check-icon" id="dc9">○</div></div>
+    <div class="step" id="ds10" onclick="dtoggle(10)"><div class="step-num amber">11</div><div class="step-body"><div class="step-title">網路線確認 &amp; 設定 Wi-Fi</div><div class="step-desc">確認網路線燈有亮 → 有網路線才設定 Wi-Fi；沒有則跳過</div></div><div class="check-icon" id="dc10">○</div></div>
+    <div class="phase-label">收工確認</div>
+    <div class="step" id="ds11" onclick="dtoggle(11)"><div class="step-num teal">12</div><div class="step-body"><div class="step-title">清理現場</div></div><div class="check-icon" id="dc11">○</div></div>
+    <div class="step" id="ds12" onclick="dtoggle(12)"><div class="step-num teal">13</div><div class="step-body"><div class="step-title">完工拍照並上傳</div><div class="step-desc">拍車位照 + 充電樁照 → 上傳到下方照片區</div></div><div class="check-icon" id="dc12">○</div></div>
+    <div class="photo-section">
+      <div class="photo-section-title" style="color:var(--amber)">完工照片（車位 + 充電樁）</div>
+      <div class="photo-upload-row">
+        <button class="photo-upload-btn" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(245,166,35,0.3);" onclick="document.getElementById('done-input').click()">拍照 / 選擇</button>
+        <span class="photo-hint">存在案件，關掉還在</span>
+      </div>
+      <input type="file" id="done-input" multiple accept="image/*" style="display:none" onchange="handlePhoto(this,'done')">
+      <div class="photo-grid" id="done-grid"><div class="photo-empty">尚未上傳完工照片</div></div>
+    </div>
+    <div class="step" id="ds13" onclick="dtoggle(13)"><div class="step-num teal">14</div><div class="step-body"><div class="step-title">拍 SID 卡並上傳</div><div class="step-desc">拍客戶 SID 卡 → 上傳到下方照片區保存</div></div><div class="check-icon" id="dc13">○</div></div>
+    <div class="photo-section">
+      <div class="photo-section-title" style="color:var(--teal)">SID 卡照片</div>
+      <div class="photo-upload-row">
+        <button class="photo-upload-btn" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(45,212,191,0.3);" onclick="document.getElementById('sid-input').click()">拍照 / 選擇</button>
+        <span class="photo-hint">存在案件，關掉還在</span>
+      </div>
+      <input type="file" id="sid-input" multiple accept="image/*" style="display:none" onchange="handlePhoto(this,'sid')">
+      <div class="photo-grid" id="sid-grid"><div class="photo-empty">尚未上傳 SID 卡照片</div></div>
+    </div>
+    <div class="step" id="ds14" onclick="dtoggle(14)"><div class="step-num green">15</div><div class="step-body"><div class="step-title">充明電能後台最終確認 → 通知住戶</div><div class="step-desc">登入後台確認上線 & 上限設定正常 → 確認可充電後，再通知住戶完成安裝</div></div><div class="check-icon" id="dc14">○</div></div>
+    <button class="del-btn" onclick="deleteCase()">刪除此案件</button>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div id="checklist" class="section">
+  <div class="progress-bar"><div class="bar-outer"><div class="bar-inner" id="g-bar" style="width:0%"></div></div><span class="bar-text" id="g-bar-txt">0 / 15</span><button class="reset-btn" onclick="resetGen()">重置</button></div>
+  <div class="info-block">不綁定案件的一次性清單</div>
+  <div class="phase-label">階段一 — 前置作業</div>
+  <div class="step" id="gs0" onclick="gtoggle(0)"><div class="step-num blue">1</div><div class="step-body"><div class="step-title">客戶詢價與填寫表單</div><div class="step-desc">Line 接洽 → 請客戶填寫表單</div></div><div class="check-icon" id="gc0">○</div></div>
+  <div class="step" id="gs1" onclick="gtoggle(1)"><div class="step-num blue">2</div><div class="step-body"><div class="step-title">收取車位照片</div><div class="step-desc">須包含匯流排位置</div></div><div class="check-icon" id="gc1">○</div></div>
+  <div class="step" id="gs2" onclick="gtoggle(2)"><div class="step-num blue">3</div><div class="step-body"><div class="step-title">畫圖給客戶確認</div></div><div class="check-icon" id="gc2">○</div></div>
+  <div class="step" id="gs3" onclick="gtoggle(3)"><div class="step-num blue">4</div><div class="step-body"><div class="step-title">安排師傅時間</div></div><div class="check-icon" id="gc3">○</div></div>
+  <div class="step" id="gs4" onclick="gtoggle(4)"><div class="step-num blue">5</div><div class="step-body"><div class="step-title">設定 OCPP 後台</div></div><div class="check-icon" id="gc4">○</div></div>
+  <div class="phase-label">階段二 — 到場安裝</div>
+  <div class="step" id="gs5" onclick="gtoggle(5)"><div class="step-num amber">6</div><div class="step-body"><div class="step-title">管線配置</div></div><div class="check-icon" id="gc5">○</div></div>
+  <div class="step" id="gs6" onclick="gtoggle(6)"><div class="step-num amber">7</div><div class="step-body"><div class="step-title">測量電壓</div><div class="step-desc">⚠ 確認匯流排有電後，才能安裝開關箱</div></div><div class="check-icon" id="gc6">○</div></div>
+  <div class="step" id="gs7" onclick="gtoggle(7)"><div class="step-num amber">8</div><div class="step-body"><div class="step-title">安裝開關箱</div></div><div class="check-icon" id="gc7">○</div></div>
+  <div class="step" id="gs8" onclick="gtoggle(8)"><div class="step-num amber">9</div><div class="step-body"><div class="step-title">開電等待 5 分鐘</div></div><div class="check-icon" id="gc8">○</div></div>
+  <div class="step" id="gs9" onclick="gtoggle(9)"><div class="step-num amber">10</div><div class="step-body"><div class="step-title">充電樁安裝上機</div></div><div class="check-icon" id="gc9">○</div></div>
+  <div class="step" id="gs10" onclick="gtoggle(10)"><div class="step-num amber">11</div><div class="step-body"><div class="step-title">網路線確認 &amp; 設定 Wi-Fi</div><div class="step-desc">有網路線才設定；沒有則跳過</div></div><div class="check-icon" id="gc10">○</div></div>
+  <div class="phase-label">收工確認</div>
+  <div class="step" id="gs11" onclick="gtoggle(11)"><div class="step-num teal">12</div><div class="step-body"><div class="step-title">清理現場</div></div><div class="check-icon" id="gc11">○</div></div>
+  <div class="step" id="gs12" onclick="gtoggle(12)"><div class="step-num teal">13</div><div class="step-body"><div class="step-title">完工拍照並上傳</div></div><div class="check-icon" id="gc12">○</div></div>
+  <div class="step" id="gs13" onclick="gtoggle(13)"><div class="step-num teal">14</div><div class="step-body"><div class="step-title">拍 SID 卡並上傳</div></div><div class="check-icon" id="gc13">○</div></div>
+  <div class="step" id="gs14" onclick="gtoggle(14)"><div class="step-num green">15</div><div class="step-body"><div class="step-title">充明電能後台最終確認 → 通知住戶</div><div class="step-desc">確認上線 & 上限正常後再通知</div></div><div class="check-icon" id="gc14">○</div></div>
+</div>
+
+<!-- OCPP -->
+<div id="ocpp" class="section">
+  <div class="phase-label">依充電樁品牌選擇設定方式</div>
+  <div class="brand-card"><div class="brand-name">MSI</div><div class="brand-detail">掃描保固卡或充電樁內的 QR code<br>進入：<strong>https://192.168.25.1</strong></div></div>
+  <div class="brand-card"><div class="brand-name">Titan</div><div class="brand-detail">PLC 連接，使用 <strong>Angry IP Scanner</strong> 掃描<br>取得網址後進入設定頁面</div></div>
+  <div class="brand-card"><div class="brand-name">飛宏</div><div class="brand-detail">PLC 連接，使用 <strong>Angry IP Scanner</strong> 掃描<br>取得網址後進入設定頁面</div></div>
+  <div class="brand-card"><div class="brand-name">源點</div><div class="brand-detail">掃描保固卡或充電樁內的 QR code<br>進入：<strong>https://192.168.10.1</strong></div></div>
+</div>
+
+<!-- SITES -->
+<div id="sites" class="section">
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">客戶地點</div>
+  <div id="sites-body"></div>
+  <div class="add-site-row">
+    <input class="add-site-city" id="new-city" placeholder="縣市" list="city-list">
+    <datalist id="city-list"><option>臺北</option><option>新北</option><option>桃園</option><option>新竹</option><option>台中</option><option>雲林</option><option>臺南</option><option>高雄</option></datalist>
+    <input class="add-site-name" id="new-site" placeholder="社區／地點名稱">
+    <button class="add-site-btn" onclick="addSite()">新增</button>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div id="notes" class="section">
+  <div class="notes-header">
+    <span style="font-size:14px;font-weight:700;">備忘筆記</span>
+    <button class="new-btn" onclick="addNote()">＋ 新增筆記</button>
+  </div>
+  <div id="notes-body"></div>
+</div>
+
+<!-- SYSTEMS -->
+<div id="systems" class="section">
+  <div class="phase-label">公司系統</div>
+  <a class="link-card" href="https://manager.line.biz/account/@635tmveh" target="_blank">
+    <div class="link-card-title">💬 LINE 官方帳號後台</div>
+    <div class="link-card-url">manager.line.biz</div>
+    <div class="link-card-cred">通知客戶用｜@635tmveh</div>
+  </a>
+  <a class="link-card" href="https://ev.hueming.com.tw/Identity/Account/Login?ReturnUrl=%2Fmanage%2Fhome" target="_blank">
+    <div class="link-card-title">⚡ 充明電能後台（正式區）</div>
+    <div class="link-card-url">ev.hueming.com.tw</div>
+    <div class="link-card-cred">帳號：<span class="__cf_email__" data-cfemail="d0b1bcb5a8fea4a3b1b990b8a5b5bdb9beb7feb3bfbdfea4a7">[email&#160;protected]</span><br>密碼：00510051</div>
+  </a>
+  <a class="link-card" href="https://devhm.azurewebsites.net/manage" target="_blank">
+    <div class="link-card-title">🧪 充明電能後台（測試區）</div>
+    <div class="link-card-url">devhm.azurewebsites.net</div>
+    <div class="link-card-cred">帳號：<span class="__cf_email__" data-cfemail="27464b425f095354464e674f52424a4e49400944484a095350">[email&#160;protected]</span><br>密碼：00510051</div>
+  </a>
+  <a class="link-card" href="https://hm-system.zeabur.app/login" target="_blank">
+    <div class="link-card-title">🏢 公司後台管理系統</div>
+    <div class="link-card-url">hm-system.zeabur.app</div>
+    <div class="link-card-cred">帳號：<span class="__cf_email__" data-cfemail="c3a2afa6bbedb7b0a2aa83abb6a6aeaaada4eda0acaeedb7b4">[email&#160;protected]</span><br>密碼：00510051</div>
+  </a>
+  <div class="phase-label">網路設定</div>
+  <a class="link-card" href="http://192.168.0.148/network" target="_blank">
+    <div class="link-card-title">🌐 網路設定頁面</div>
+    <div class="link-card-url">192.168.0.148/network</div>
+    <div class="link-card-cred">帳號：install<br>密碼：installer1234</div>
+  </a>
+  <a class="link-card" href="https://192.168.0.100/" target="_blank">
+    <div class="link-card-title">🔧 MSI 充電樁設定</div>
+    <div class="link-card-url">192.168.0.100</div>
+    <div class="link-card-cred">帳號：msi<br>密碼：Hueming24740032</div>
+  </a>
+  <div class="phase-label">OCPP / CSMS</div>
+  <div class="link-card" style="cursor:default">
+    <div class="link-card-title">☁ CSMS 雲端版</div>
+    <div class="link-card-url">hmevcs-server.azurewebsites.net/ocpp/</div>
+  </div>
+  <a class="link-card" href="https://hmdify9.zeabur.app/apps" target="_blank">
+    <div class="link-card-title">🤖 Dify</div>
+    <div class="link-card-url">hmdify9.zeabur.app/apps</div>
+  </a>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">新增案件</div>
+    <div class="field"><label>客戶姓名</label><input id="f-name" type="text" placeholder="例：王小明"></div>
+    <div class="field"><label>聯絡電話</label><input id="f-phone" type="tel" placeholder="0912-345-678"></div>
+    <div class="field"><label>社區 / 地點名稱</label><select id="f-addr"><option value="">選擇社區</option></select></div>
+    <div class="field" id="f-addr-custom-wrap" style="display:none"><label>自訂地點</label><input id="f-addr-custom" type="text" placeholder="輸入地址或社區名稱"></div>
+    <div class="field"><label>開關箱型號</label>
+      <select id="f-switchbox">
+        <option value="">選擇開關箱</option>
+        <option>Wetown 開關箱</option>
+        <option>Siemens 開關箱</option>
+      </select>
+    </div>
+    <div class="field"><label>充電樁型號</label>
+      <select id="f-charger">
+        <option value="">選擇充電樁</option>
+        <optgroup label="飛宏"><option>飛宏 AW 7kW Type1</option><option>飛宏 AW 7kW Type2</option><option>飛宏 AX 11kW Type1</option><option>飛宏 AX 11kW Type2</option></optgroup>
+        <optgroup label="MSI Life+"><option>MSI Life+ 7kW Type1</option><option>MSI Life+ 7kW Type2</option><option>MSI Life+ 13.2kW Type1</option><option>MSI Life+ 13.2kW Type2</option></optgroup>
+        <optgroup label="MSI Premium"><option>MSI Premium 7kW Type1</option><option>MSI Premium 7kW Type2</option><option>MSI Premium 13.2kW Type1</option><option>MSI Premium 13.2kW Type2</option></optgroup>
+        <optgroup label="TITAN"><option>TITAN Smart 7kW Type1</option><option>TITAN Smart 7kW Type2</option></optgroup>
+      </select>
+    </div>
+    <div class="field"><label>案件狀態</label>
+      <select id="f-status" onchange="document.getElementById('f-reason-wrap').style.display=this.value==='pending'?'':'none'">
+        <option value="pending">排程中</option>
+        <option value="confirmed">確定安裝</option>
+        <option value="done">已完成</option>
+      </select>
+    </div>
+    <div class="field" id="f-reason-wrap"><label>排程中原因</label>
+      <select id="f-reason">
+        <option value="">選擇原因</option>
+        <option>等待客戶確認圖面</option>
+        <option>等待師傅排期</option>
+        <option>等待客戶回覆時間</option>
+        <option>等待社區審核</option>
+        <option>客戶暫緩</option>
+        <option>其他</option>
+      </select>
+    </div>
+    <div class="field" id="f-reason-custom-wrap" style="display:none"><label>其他原因說明</label>
+      <input id="f-reason-custom" type="text" placeholder="請說明原因"></div>
+    <div class="field"><label>安裝日期</label><input id="f-date" type="date"></div>
+    <div class="field"><label>客戶需要立柱？</label>
+      <select id="f-pillar">
+        <option value="">未確認</option>
+        <option value="yes">是</option>
+        <option value="no">否</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal
